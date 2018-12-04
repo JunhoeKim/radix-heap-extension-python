@@ -38,13 +38,13 @@ class Graph():
                     dist[v] = dist[u] + weight
                     heapq.heappush(h, (dist[v], v))
 
-        print(dist)
+        print("Minheap : " + str(dist))
 
-    def dijkstra_radix(self, src, level=1):
+    def dijkstra_radix(self, src, level='One Level'):
         radixheap = None
-        if level == 1:
+        if level == 'One Level':
             radixheap = RadixHeap(self.n, self.C)
-        elif level == 2:
+        elif level == 'Two level':
             radixheap = RadixHeap2(self.n, self.C, 2)
         else:
             radixheap = FibonacciHeap(self.n, self.C, 2)
@@ -66,14 +66,13 @@ class Graph():
                         dist[v] = dist[u] + weight
                         radixheap.insert(v, dist[v])
                     else:
-                        print(dist[v], dist[u] + weight, u, v)
                         dist[v] = dist[u] + weight
                         radixheap.decrease(v, dist[v])
       
-        print("level " + str(level) + ": " + str(dist))
+        print(level + " : " + str(dist))
 
 graph = Graph()
-# graph.dijkstra(0)
-# graph.dijkstra_radix(0)
-# graph.dijkstra_radix(0, level=2)
-graph.dijkstra_radix(0, level=3)
+graph.dijkstra(0)
+graph.dijkstra_radix(0)
+graph.dijkstra_radix(0, level='Two level')
+graph.dijkstra_radix(0, level='Two level + Fibonacci Heap')

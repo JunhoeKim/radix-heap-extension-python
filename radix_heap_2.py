@@ -16,23 +16,19 @@ class RadixHeap2():
       for _ in range(self.K):
         self.buckets[i].append(DoublyList())
     self.bucket_capacities = [0 for i in range(self.B)]
-    self.bucket_indices = [(self.B, self.K, None) for i in range(self.n)] 
+    self.node_table = [(self.B, self.K, None) for i in range(self.n)] 
     self.bucket_activates = [True for i in range(self.B)]
     self.len = 0
 
   def insert(self, label, d):
-    print('------------insert')
     self._insert(label, self.B - 1, d)
     self.len += 1
-    self.print_buckets()
 
   def decrease(self, label, d):
-    print('------------decrease')
-    bucket_index, seg_index, node = self.bucket_indices[label]
+    bucket_index, seg_index, node = self.node_table[label]
     self.buckets[bucket_index][seg_index].remove(node)
     self.bucket_capacities[bucket_index] -= 1
     self._insert(label, bucket_index, d)
-    self.print_buckets()
 
   def delete_min(self):
     if self.bucket_capacities[0] > 0:
@@ -41,7 +37,6 @@ class RadixHeap2():
           self.bucket_capacities[0] -= 1
           self.len -= 1
           return self.buckets[0][i].pop().data
-
 
     temp_vertices = []
     min_index = 0
@@ -89,8 +84,8 @@ class RadixHeap2():
         curr_segment = curr_bucket[curr_k]
         self.bucket_capacities[curr_index] += 1
         node = curr_segment.append((label, d))
-        self.bucket_indices[label] = (curr_index, curr_k, node)
-        return self.bucket_indices[label]
+        self.node_table[label] = (curr_index, curr_k, node)
+        return self.node_table[label]
       
       if self.bucket_activates[bucket_index] == True:
         bucket_index_offset = 0

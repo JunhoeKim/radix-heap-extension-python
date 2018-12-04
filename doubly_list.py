@@ -1,8 +1,13 @@
 class Node(object):
-  def __init__(self, data, prev, next):
-    self.data = data
-    self.prev = prev
-    self.next = next
+  def __init__(self, data):
+    self.data = data 
+    self.parent = None
+    self.prev = None
+    self.next = None
+    self.children = DoublyList() 
+    self.rank = 0
+    self.mark = False
+    self.active = False
 
 class DoublyList(object):
  
@@ -12,7 +17,7 @@ class DoublyList(object):
     self.size = 0
  
   def append(self, data):
-    new_node = Node(data, None, None)
+    new_node = Node(data)
     return self.append_node(new_node)
 
   def append_node(self, node):

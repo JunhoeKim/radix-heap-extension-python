@@ -4,18 +4,7 @@ from radix_heap_2 import RadixHeap2
 
 import math
 
-NodeData = namedtuple('NodeData', 'label seg_index')
-
-class TreeNode(object):
-  def __init__(self, data):
-    self.data = data 
-    self.parent = None
-    self.prev = None
-    self.next = None
-    self.child_list = DoublyList() 
-    self.rank = 0
-    self.mark = False
-    self.active = False
+NodeData = namedtuple('NodeData', 'label key')
 
 class FibonacciHeap():
   def __init__(self, n, C, K):
@@ -24,119 +13,129 @@ class FibonacciHeap():
     self.B = int(math.ceil(math.log(C + 1, K)) + 1)
     self.radixHeap = RadixHeap2(n, C, K)
     self.min_node = None
-    self.vertices = [None] * n
-    self.S = [set() for x in range(self.B * K)]
+
+    # a lookup table of information of nodes
+    self.nodes = [None] * n
+    self.S = [set() for x in range(self.B * self.K)]
     self.active_roots = DoublyList()
     self.roots = DoublyList()
 
   def insert(self, label, d):
-    bucket_index, curr_k, _ =self.radixHeap._insert(label, self.B - 1, d)
-    seg_index = bucket_index * self.K + curr_k
+    # Insert a labeled node to radix heap
+    b, k, _ = self.radixHeap._insert(label, self.B - 1, d)
     self.radixHeap.len += 1
-    # There are no elements in representives of the segment index
-    new_node = TreeNode(NodeData(label=label, seg_index=seg_index))
-    self.vertices[label] = new_node
-    self.S[seg_index].add(label)
+    # Retrieve heap key from bucket index (b) and segment index (k)
+    key = b * self.K + k 
+
+    # Append a new node to root trees
+    new_node = Node(NodeData(label=label, key=key))
+    self.nodes[label] = new_node
+    self.S[key].add(label)
     self.roots.append_node(new_node)
-    if len(self.S[seg_index]) == 1:
+
+    # If there is only one element in the set, set the new node as a representative
+    if len(self.S[key]) == 1:
       new_node.active = True
       self.active_roots.append_node(new_node) 
-      # update min node
-      if self.min_node == None or self.min_node.data.seg_index > new_node.data.seg_index:
-        self.min_node = new_node
+      # Update min node
+      self._update_min(new_node)
 
   def decrease(self, label, d):
-    result_data = self.radixHeap.decrease(label, d)
-    bucket_index, curr_k, _ = self.radixHeap.bucket_indices[label]
-    seg_index = bucket_index * self.K + curr_k
-    target_node = self.vertices[label]
-    prev_value = target_node.data
-    target_node.data = NodeData(label=label, seg_index=seg_index)
+    # Decrease a labeled node
+    self.radixHeap.decrease(label, d)
 
-    if target_node.parent != None and target_node.parent.data.seg_index > target_node.data.seg_index:
-      parent = target_node.parent
-      self._cut(target_node)
+    b, k, _ = self.radixHeap.node_table[label]
+    key = b * self.K + k
+    node = self.nodes[label]
+    prev_key = node.data.key
+
+    # Update a new key of heap node
+    node.data = NodeData(label=label, key=key)
+    self._update_min(node)
+
+    # If heap condition is violated, do link cut process
+    if node.parent != None and node.parent.data.key > node.data.key:
+      parent = node.parent
+      self._cut(node)
       self._cascading_cut(parent)
 
-    if self.min_node.data.seg_index > target_node.data.seg_index:
-      self.min_node = target_node
+    # Remove the node from the previous set
+    self.S[prev_key].remove(label)
+    # If there are remaining nodes in the previous segment, assign a new node as a representative
+    if node.active == True and len(self.S[prev_key]) > 0:
+      remain_label = next(iter(self.S[prev_key]))
+      self.nodes[remain_label].active = True
+      self.active_roots.append_node(self.nodes[remain_label])
 
-    self.S[prev_value.seg_index].remove(label)
-    # if there are remaining nodes in the previous segment assign new active tree root node
-    if target_node.active == True and len(self.S[prev_value.seg_index]) > 0:
-      remain_label = next(iter(self.S[prev_value.seg_index]))
-      self.vertices[remain_label].active = True
-      self.active_roots.append_node(self.vertices[remain_label])
+    # Move the node to the new set
+    self.S[key].add(label)
 
-    self.S[seg_index].add(label)
-    if target_node.active == True:
+    # It the new set already has a representative, deprive a node of 
+    if node.active == True:
       # move to passive tree
-      if len(self.S[seg_index]) > 1:
-        target_node.active = False
-        self.active_roots.remove(target_node)
+      if len(self.S[key]) > 1:
+        node.active = False
+        self.active_roots.remove(node)
 
-    # if a new set is empty, convert target_node to the active node
-    if len(self.S[seg_index]) == 1 and target_node.active == False:
-      self.active_roots.append_node(target_node)
-      target_node.active = True
-
-    return result_data
+    # if a new set is empty, convert node to the active node
+    if len(self.S[key]) == 1 and node.active == False:
+      self.active_roots.append_node(node)
+      node.active = True
 
   def delete_min(self):
-    print('--------------delete min')
-    min_seg_index = self.min_node.data.seg_index
-    bucket_index = min_seg_index // self.K
-    relative_seg_index = min_seg_index - bucket_index * self.K
+    min_key = self.min_node.data.key
+    b = min_key // self.K
+    k = min_key - b * self.K
     # If the minimum node is in a first segment
-    if min_seg_index == 0:
-      self.S[min_seg_index].remove(self.min_node.data.label)
-      if len(self.S[min_seg_index]) > 0:
-        new_active_node = self.vertices[next(iter(self.S[min_seg_index]))]
+    if min_key == 0:
+      self.S[min_key].remove(self.min_node.data.label)
+      if len(self.S[min_key]) > 0:
+        new_active_node = self.nodes[next(iter(self.S[min_key]))]
         new_active_node.active = True
         self.active_roots.append_node(new_active_node)
       self._extract_min_in_tree()
       return self.radixHeap.delete_min()
 
     else:
-      temp_vertices, min_index, moved_info = self.radixHeap.redistribute_segment(bucket_index, relative_seg_index)
-      self.S[min_seg_index] = set()
-      min_label = temp_vertices[min_index].data[0]
+      temp_nodes, min_index, moved_info = self.radixHeap.redistribute_segment(b, k)
+      self.S[min_key] = set()
+      min_label = temp_nodes[min_index].data[0]
       if len(moved_info) > 0:
         # if actual minimum node is in active trees
         if min_label == self.min_node.data.label:
           # Redistribute
           for node_info in moved_info:
             moved_label = node_info[2].data[0]
-            moved_seg_index = node_info[0] * self.K + node_info[1]
-            self.S[moved_seg_index].add(moved_label)
-            self.vertices[moved_label].data = NodeData(label=moved_label, seg_index=moved_seg_index)
-            if len(self.S[moved_seg_index]) == 1 and self.vertices[moved_label].active == False:
-              self.vertices[moved_label].active = True
-              self.active_roots.append_node(self.vertices[moved_label])
+            moved_key = node_info[0] * self.K + node_info[1]
+            self.S[moved_key].add(moved_label)
+            self.nodes[moved_label].data = NodeData(label=moved_label, key=moved_key)
+            if len(self.S[moved_key]) == 1 and self.nodes[moved_label].active == False:
+              self.nodes[moved_label].active = True
+              self.active_roots.append_node(self.nodes[moved_label])
           self._extract_min_in_tree() 
         else:
           # Insert the node that was in the active root first.
           prev_active_node_index = [i for i, node_info in enumerate(moved_info) if node_info[2].data[0] == self.min_node.data.label][0]
           node_info = moved_info[prev_active_node_index]
-          node_seg_index = node_info[0] * self.K + node_info[1]
-          self.S[node_seg_index].add(node_info[2].data[0])
-          self.min_node.data = NodeData(label=self.min_node.data.label, seg_index=node_seg_index)
+          node_key = node_info[0] * self.K + node_info[1]
+          self.S[node_key].add(node_info[2].data[0])
+          self.min_node.data = NodeData(label=self.min_node.data.label, key=node_key)
           # Redistribute
           for node_info in moved_info:
             moved_label = node_info[2].data[0]
-            moved_seg_index = node_info[0] * self.K + node_info[1]
-            self.S[moved_seg_index].add(moved_label)
-            self.vertices[moved_label].data = NodeData(label=moved_label, seg_index=moved_seg_index)
-            if len(self.S[moved_seg_index]) == 1 and self.vertices[moved_label].active == False:
-              self.vertices[moved_label].active = True
-              self.active_roots.append_node(self.vertices[moved_label])
+            moved_key = node_info[0] * self.K + node_info[1]
+            self.S[moved_key].add(moved_label)
+            self.nodes[moved_label].data = NodeData(label=moved_label, key=moved_key)
+            if len(self.S[moved_key]) == 1 and self.nodes[moved_label].active == False:
+              self.nodes[moved_label].active = True
+              self.active_roots.append_node(self.nodes[moved_label])
           # remove minimum vertex in the passive trees
-          self.roots.remove(self.vertices[min_label])
+          self.roots.remove(self.nodes[min_label])
           self._consolidate()
       else:
         self._extract_min_in_tree()
-    self.radixHeap.print_buckets()
-    return self.radixHeap.bucket_indices[min_label][2].data
+    # self.radixHeap.print_buckets()
+    return self.radixHeap.node_table[min_label][2].data
 
   def is_empty(self):
     return self.radixHeap.is_empty()
@@ -148,7 +147,7 @@ class FibonacciHeap():
     self.roots.remove(min_node)
 
     # update children to active root
-    children = deleted_node.child_list
+    children = deleted_node.children
     while children.size > 0:
       self.active_roots.append_node(children.pop())
 
@@ -157,7 +156,7 @@ class FibonacciHeap():
   def _cut(self, target_node):
     parent = target_node.parent
     parent.rank -= 1
-    parent.child_list.remove(target_node)
+    parent.children.remove(target_node)
     self.roots.append_node(target_node)
     if target_node.active:
       self.active_roots.append_node(target_node)
@@ -174,18 +173,17 @@ class FibonacciHeap():
         self._cut(target_node)
         self._cascading_cut(parent)
 
-
   def _consolidate(self):
     rank_nodes = [None] * self.n
     active_roots = self.active_roots.get_nodes()
     self.min_node = active_roots[0] if len(active_roots) > 0 else None
-    for i, root in enumerate(active_roots):
+    for root in active_roots:
       rank = root.rank
       new_root = root
 
       if rank_nodes[rank] != None:
         prev_node = rank_nodes[rank]
-        if root.data.seg_index > prev_node.data.seg_index:
+        if root.data.key > prev_node.data.key:
           new_root = self._link(root, prev_node)
         else:
           new_root = self._link(prev_node, root)
@@ -193,12 +191,15 @@ class FibonacciHeap():
         rank_nodes[rank] = None
         rank_nodes[rank + 1] = new_root
 
-      if self.min_node == None or self.min_node.data.seg_index > new_root.data.seg_index:
-        self.min_node = new_root
+      self._update_min(new_root)
+
+  def _update_min(self, node):
+    if self.min_node == None or self.min_node.data.key > node.data.key:
+      self.min_node = node
 
   def _link(self, x, y):
     self.active_roots.remove(x)
-    y.child_list.append_node(x)
+    y.children.append_node(x)
     y.rank += 1
     x.parent = y
     y.mark = False
