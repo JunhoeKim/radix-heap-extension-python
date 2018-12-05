@@ -14,14 +14,14 @@ class DoublyList(object):
   def __init__(self):
     self.head = None
     self.tail = None
-    self.size = 0
+    self.len = 0
  
   def append(self, data):
     new_node = Node(data)
     return self.append_node(new_node)
 
   def append_node(self, node):
-    self.size += 1
+    self.len += 1
     if self.head == None:
       self.head = self.tail = node
     else:
@@ -35,7 +35,7 @@ class DoublyList(object):
     if node == self.head:
       return self.pop()
     else:
-      self.size -= 1
+      self.len -= 1
       node.prev.next = node.next
       if node.next != None:
         node.next.prev =  node.prev
@@ -54,9 +54,9 @@ class DoublyList(object):
     return min_node
 
   def pop(self):
-    self.size -= 1
+    self.len -= 1
     curr = self.head
-    if self.size == 0:
+    if self.len == 0:
       self.head = None
       self.tail = None
     else:
@@ -66,7 +66,7 @@ class DoublyList(object):
 
   def get_items(self):
 
-    if self.size == 0:
+    if self.len == 0:
       return []
 
     items = []
@@ -80,7 +80,7 @@ class DoublyList(object):
     return items
 
   def get_nodes(self):
-    if self.size == 0:
+    if self.len == 0:
       return []
 
     nodes = []

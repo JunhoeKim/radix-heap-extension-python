@@ -11,60 +11,60 @@ class RadixHeap():
     self.sizes = [1] + [2 ** (i - 1) for i in range(1, self.B)] + [self.n * self.C + 1]
     self.buckets = [DoublyList() for x in range(self.B)]
     self.u = [-1] + [2 ** i - 1 for i in range(self.B - 1)] + [self.n * self.C + 1]
-    self.bucket_indices = [(self.B, None) for i in range(self.n)]
+    self.node_table = [(self.B, None) for i in range(self.n)]
     self.bucket_activates = [True for i in range(self.B)]
     self.len = 0
 
   def insert(self, label, d):
     self._insert(label, self.B - 1, d)
-    # print('insert', self.buckets)
     self.len += 1
 
   def decrease(self, label, d):
-    # print('decrease', self.buckets)
-    bucket_index, node = self.bucket_indices[label]
-    self.buckets[bucket_index].remove(node)
-    self._insert(label, bucket_index, d)
+    b, node = self.node_table[label]
+    self.buckets[b].remove(node)
+    self._insert(label, b, d)
 
   def _insert(self, label, start_index, d):
-    bucket_index_offset = 0
+    b_offset = 0
+    # Find the appropriate bucket index according to upper bound values (u)
     for i in range(start_index + 1):
-      bucket_index = start_index - i
+      b = start_index - i
 
-      if self.bucket_activates[bucket_index] == False:
-        bucket_index_offset += 1
+      # Skip inactive buckets
+      if self.bucket_activates[b] == False:
+        b_offset += 1
         continue
 
-      if d > self.u[bucket_index]:
-        curr_index = bucket_index + bucket_index_offset
+      if d > self.u[b]:
+        curr_index = b + b_offset
         curr_bucket = self.buckets[curr_index]
         node = curr_bucket.append((label, d))
-        self.bucket_indices[label] = (curr_index, node)
+        self.node_table[label] = (curr_index, node)
         break
 
-      if self.bucket_activates[bucket_index] == True:
-        bucket_index_offset = 0
+      if self.bucket_activates[b] == True:
+        b_offset = 0
 
   def delete_min(self):
-    # print('delete min', self.buckets)
     self.len -= 1
-    if self.buckets[0].size > 0:
+    # If the first bucket is not empty, just pop and return the node
+    if self.buckets[0].len > 0:
       return self.buckets[0].pop().data
-    temp_vertices = []
+    temp_nodes = []
     min_index = 0
+    # Find left most non empty bucket, find minimum node, reset upper bounds, redistribute
     for i in range(0, self.B):
-      if self.buckets[i].size > 0:
-        while self.buckets[i].size > 0:
-          temp_vertices.append(self.buckets[i].pop())
-          if temp_vertices[min_index].data[1] > temp_vertices[len(temp_vertices) - 1].data[1]:
-            min_index = len(temp_vertices) - 1
-        self._update_u(temp_vertices[min_index].data[1], i)
-        for i, node in enumerate(temp_vertices):
+      if self.buckets[i].len > 0:
+        while self.buckets[i].len > 0:
+          temp_nodes.append(self.buckets[i].pop())
+          if temp_nodes[min_index].data[1] > temp_nodes[len(temp_nodes) - 1].data[1]:
+            min_index = len(temp_nodes) - 1
+        self._update_u(temp_nodes[min_index].data[1], i)
+        for i, node in enumerate(temp_nodes):
           if i != min_index:
             self._insert(node.data[0], i, node.data[1])
         break
-    # self.print_buckets()
-    return temp_vertices[min_index].data
+    return temp_nodes[min_index].data
 
   def is_empty(self):
     return self.len == 0
