@@ -100,8 +100,8 @@ class RadixHeap2():
   def _compute_upper_k(self, b, k):
     return self.u[b + 1] - (self.K - k - 1) * self.K ** b
 
-  def is_empty(self):
-    return self.len == 0
+  def __len__(self):
+    return self.len
 
   def _update_u(self, d, j, k):
     self.u[0] = d - 1

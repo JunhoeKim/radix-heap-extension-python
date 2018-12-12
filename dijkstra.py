@@ -52,7 +52,7 @@ class Graph():
         dist[src] = 0
         radixheap.insert(src, dist[src])
 
-        while radixheap.is_empty() != True:
+        while len(radixheap) > 0:
             top_vertex = radixheap.delete_min()
             u = top_vertex[0]
             if dist[u] < top_vertex[1]:

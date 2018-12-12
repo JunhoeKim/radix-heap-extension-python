@@ -4,6 +4,7 @@ import math
 from doubly_list import DoublyList, Node
 
 class RadixHeap():
+  
   def __init__(self, n, C):
     self.n = n
     self.C = C
@@ -66,8 +67,8 @@ class RadixHeap():
         break
     return temp_nodes[min_index].data
 
-  def is_empty(self):
-    return self.len == 0
+  def __len__(self):
+    return self.len
 
   def _update_u(self, d, j):
     self.u[0] = d - 1

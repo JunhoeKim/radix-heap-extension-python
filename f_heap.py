@@ -126,9 +126,9 @@ class FibonacciHeap():
       else:
         self._extract_min_in_tree()
     return self.radixHeap.node_table[min_label][2].data
-
-  def is_empty(self):
-    return self.radixHeap.is_empty()
+    
+  def __len__(self):
+    return len(self.radixHeap)
 
   def _extract_min_in_tree(self):
     min_node = self.min_node
