@@ -107,7 +107,7 @@ class RadixHeap2():
     self.u[0] = d - 1
     upper_bound = self._compute_upper_k(j, k)
     for i in range(1, j + 1):
-      self.u[i] = min(self.u[i - 1] + self.sizes[i], upper_bound)
+      self.u[i] = min(self.u[i - 1] + self.sizes[i - 1], upper_bound)
       if self.u[i] <= self.u[i - 1]:
         self.bucket_activates[i] = False
       else:

@@ -61,8 +61,8 @@ class RadixHeap():
           if temp_nodes[min_index].data[1] > temp_nodes[len(temp_nodes) - 1].data[1]:
             min_index = len(temp_nodes) - 1
         self._update_u(temp_nodes[min_index].data[1], i)
-        for i, node in enumerate(temp_nodes):
-          if i != min_index:
+        for j, node in enumerate(temp_nodes):
+          if j != min_index:
             self._insert(node.data[0], i, node.data[1])
         break
     return temp_nodes[min_index].data

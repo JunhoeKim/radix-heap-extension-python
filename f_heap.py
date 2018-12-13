@@ -26,7 +26,6 @@ class FibonacciHeap():
     self.radixHeap.len += 1
     # Retrieve heap key from bucket index (b) and segment index (k)
     key = b * self.K + k 
-
     # Append a new node to root trees
     new_node = Node(NodeData(label=label, key=key))
     self.nodes[label] = new_node
@@ -181,7 +180,6 @@ class FibonacciHeap():
 
         rank_nodes[rank] = None
         rank_nodes[rank + 1] = new_root
-
       self._update_min(new_root)
 
   def _update_min(self, node):
