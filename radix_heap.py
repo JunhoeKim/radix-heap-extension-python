@@ -15,7 +15,6 @@ class RadixHeap():
     self.node_table = [(self.B, None) for i in range(self.n)]
     self.bucket_activates = [True for i in range(self.B)]
     self.len = 0
-    print(self.C, self.n, self.B)
 
   def insert(self, label, d):
     self._insert(label, self.B - 1, d)
@@ -66,6 +65,8 @@ class RadixHeap():
           if j != min_index:
             self._insert(node.data[0], i, node.data[1])
         break
+
+    # self.print_bucket_capacities()
     return temp_nodes[min_index].data
 
   def __len__(self):
@@ -75,11 +76,16 @@ class RadixHeap():
     self.u[0] = d - 1
     self.u[1] = d
     for i in range(2, j + 1):
-      self.u[i] = min(self.u[i - 1] + self.sizes[i], self.u[j])
+      self.u[i] = min(self.u[i - 1] + self.sizes[i], self.u[j + 1])
       if self.u[i] <= self.u[i - 1]:
         self.bucket_activates[i] = False
       else:
         self.bucket_activates[i] = True
+
+  def print_bucket_capacities(self):
+    print([x.len for x in self.buckets])
+    print(self.u)
+    print(self.bucket_activates)
 
   def print_buckets(self):
     print('\n------print buckets-------')
