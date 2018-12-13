@@ -3,7 +3,7 @@ from dijkstra import Graph
 
 nodeDic = {}
 nodeCount = 0
-arcCount = 0
+C = 0
 # Sample data used on http://www.dis.uniroma1.it/challenge9/download.shtml
 # input file format also follows origin file format.
 # ex) a 1 2 803
@@ -15,10 +15,11 @@ for line in open(sys.argv[1]):
         parentNode = int(parentNode) - 1
         childNode = int(childNode) - 1
         distance = int(distance)
+        if C < distance:
+            C = distance
 
         # save data in dictionary
         nodeDic.setdefault(parentNode, []).append((childNode, distance))
-        arcCount = arcCount + 1
     else:
         continue
 
@@ -35,7 +36,7 @@ def printResult(dist):
     print(len(dist), sum(dist))
 
 # Run all algoritms
-graph = Graph(nodeCount, arcCount, inputGraphList)
+graph = Graph(nodeCount, C, inputGraphList)
 printResult(graph.dijkstra(0))
 printResult(graph.dijkstra_radix(0))
 printResult(graph.dijkstra_radix(0, level='Two level'))

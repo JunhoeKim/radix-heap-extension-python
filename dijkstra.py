@@ -5,9 +5,9 @@ from radix_heap_2 import RadixHeap2
 from f_heap import FibonacciHeap
 
 class Graph():
-    def __init__(self, nodeCount, arcCount, graphList):
+    def __init__(self, nodeCount, C, graphList):
         self.n = nodeCount
-        self.C = arcCount
+        self.C = C
         
         # sample data for test
         # self.graph = [

@@ -15,6 +15,7 @@ class RadixHeap():
     self.node_table = [(self.B, None) for i in range(self.n)]
     self.bucket_activates = [True for i in range(self.B)]
     self.len = 0
+    print(self.C, self.n, self.B)
 
   def insert(self, label, d):
     self._insert(label, self.B - 1, d)
