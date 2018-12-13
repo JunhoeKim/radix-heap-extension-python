@@ -5,9 +5,9 @@ from radix_heap_2 import RadixHeap2
 from f_heap import FibonacciHeap
 
 class Graph():
-    def __init__(self, g):
-        self.n = 6
-        self.C = 20
+    def __init__(self, nodeCount, arcCount, graphList):
+        self.n = nodeCount
+        self.C = arcCount
         
         # sample data for test
         # self.graph = [
@@ -20,7 +20,7 @@ class Graph():
         # ]
 
         # label, distance
-        self.graph = g
+        self.graph = graphList
 
     # O(mlogn) Implementation
     def dijkstra(self, src):
@@ -42,7 +42,8 @@ class Graph():
                     dist[v] = dist[u] + weight
                     heapq.heappush(h, (dist[v], v))
 
-        print("Minheap : " + str(dist))
+        return dist
+        #print("Minheap : " + str(dist))
 
     def dijkstra_radix(self, src, level='One Level'):
         radixheap = None
@@ -73,7 +74,8 @@ class Graph():
                         dist[v] = dist[u] + weight
                         radixheap.decrease(v, dist[v])
       
-        print(level + " : " + str(dist))
+        #print(level + " : " + str(dist))
+        return dist
 
 # graph = Graph()
 # graph.dijkstra(0)

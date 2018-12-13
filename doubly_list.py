@@ -36,7 +36,12 @@ class DoublyList(object):
       return self.pop()
     else:
       self.len -= 1
-      node.prev.next = node.next
+      try:
+        node.prev.next = node.next
+      except AttributeError:
+        print(node, node.prev)
+        quit()
+
       if node.next != None:
         node.next.prev =  node.prev
       if self.tail == node:

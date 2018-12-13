@@ -2,7 +2,8 @@ import os, sys
 from dijkstra import Graph
 
 nodeDic = {}
-
+nodeCount = 0
+arcCount = 0
 # Sample data used on http://www.dis.uniroma1.it/challenge9/download.shtml
 # input file format also follows origin file format.
 # ex) a 1 2 803
@@ -17,20 +18,25 @@ for line in open(sys.argv[1]):
 
         # save data in dictionary
         nodeDic.setdefault(parentNode, []).append((childNode, distance))
+        arcCount = arcCount + 1
     else:
         continue
 
 # convert dictionary to graph list
 inputGraphList = []
-for key in range(max(nodeDic.keys())+1):
+nodeCount = max(nodeDic.keys()) + 1
+for key in range(nodeCount):
     inputGraphList.append(nodeDic.setdefault(key, []))    
 
+# print(inputGraphList[:5])
+# print(inputGraphList[-5:])
 
-print(inputGraphList[:5])
-print(inputGraphList[-5:])
+def printResult(dist):
+    print(len(dist), sum(dist))
 
-graph = Graph(inputGraphList)
-graph.dijkstra(0)
-graph.dijkstra_radix(0)
-graph.dijkstra_radix(0, level='Two level')
-graph.dijkstra_radix(0, level='Two level + Fibonacci Heap')
+# Run all algoritms
+graph = Graph(nodeCount, arcCount, inputGraphList)
+printResult(graph.dijkstra(0))
+printResult(graph.dijkstra_radix(0))
+printResult(graph.dijkstra_radix(0, level='Two level'))
+printResult(graph.dijkstra_radix(0, level='Two level + Fibonacci Heap'))
