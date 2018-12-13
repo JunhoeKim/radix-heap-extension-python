@@ -5,18 +5,22 @@ from radix_heap_2 import RadixHeap2
 from f_heap import FibonacciHeap
 
 class Graph():
-    def __init__(self):
+    def __init__(self, g):
         self.n = 6
         self.C = 20
+        
+        # sample data for test
+        # self.graph = [
+        #     [(1, 12), (3, 14), (4, 20), (2, 0)],
+        #     [(0, 12), (3, 4)],
+        #     [(0, 0), (4, 8)],
+        #     [(0, 14), (1, 4), (4, 5), (5, 3)],
+        #     [(0, 20), (2, 8), (3, 5), (5, 9)],
+        #     [(3, 3), (4, 9)]
+        # ]
+
         # label, distance
-        self.graph = [
-            [(1, 12), (3, 14), (4, 20), (2, 0)],
-            [(0, 12), (3, 4)],
-            [(0, 0), (4, 8)],
-            [(0, 14), (1, 4), (4, 5), (5, 3)],
-            [(0, 20), (2, 8), (3, 5), (5, 9)],
-            [(3, 3), (4, 9)]
-        ]
+        self.graph = g
 
     # O(mlogn) Implementation
     def dijkstra(self, src):
@@ -71,8 +75,8 @@ class Graph():
       
         print(level + " : " + str(dist))
 
-graph = Graph()
-graph.dijkstra(0)
-graph.dijkstra_radix(0)
-graph.dijkstra_radix(0, level='Two level')
-graph.dijkstra_radix(0, level='Two level + Fibonacci Heap')
+# graph = Graph()
+# graph.dijkstra(0)
+# graph.dijkstra_radix(0)
+# graph.dijkstra_radix(0, level='Two level')
+# graph.dijkstra_radix(0, level='Two level + Fibonacci Heap')
