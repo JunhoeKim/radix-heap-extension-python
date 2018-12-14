@@ -85,7 +85,12 @@ class FibonacciHeap():
       self.active_roots.append_node(node)
 
   def delete_min(self):
-    min_key = self.min_node.data.key
+    # print([x.key for x in self.active_roots.get_items()])
+    try:
+      min_key = self.min_node.data.key
+    except AttributeError:
+      print([x.key for x in self.active_roots.get_items()])
+      print([x.key for x in self.passive_roots.get_items()])
     b = min_key // self.K
     k = min_key - b * self.K
 
@@ -114,7 +119,7 @@ class FibonacciHeap():
           # Redistribute
           self._redistribute_nodes(target_info)
           # Remove the remaining minimum node and do linking operation
-          self._extract_min_in_tree() 
+          self._extract_min_in_tree()
         else:
           # Insert the node that was in the active root first
           prev_active_node_index = [i for i, target in enumerate(target_info) if target[2].data[0] == self.min_node.data.label][0]
@@ -159,7 +164,7 @@ class FibonacciHeap():
     parent = node.parent
     # If node is not a root
     if parent != None:
-      if parent.mark == False:
+      if parent.mark == False and parent.children.len > 0:
         parent.mark = True
       else:
         self._cut(node)
@@ -185,8 +190,12 @@ class FibonacciHeap():
         self.rank_nodes[rank + 1] = new_root
         if max_rank < rank + 1:
           max_rank = rank + 1
+      if root.data.label == 84045:
+        print('root', root.data)
+        print(self.min_node.data)
+        print('new_root', new_root.data)
       self._update_min(new_root)
-      
+
     for i in range(max_rank):
       self.rank_nodes[i] = None
 
@@ -199,11 +208,22 @@ class FibonacciHeap():
       target_label = target[2].data[0]
       target_key = target[0] * self.K + target[1]
       self.S[target_key].add(target_label)
-      self.nodes[target_label].data = NodeData(label=target_label, key=target_key)
-      if len(self.S[target_key]) == 1 and self.nodes[target_label].active == False:
-        self.nodes[target_label].active = True
-        self.passive_roots.remove(self.nodes[target_label])
-        self.active_roots.append_node(self.nodes[target_label])
+      target_node = self.nodes[target_label]
+      target_node.data = NodeData(label=target_label, key=target_key)
+      if len(self.S[target_key]) == 1:
+        if self.nodes[target_label].active == False:
+          target_node.active = True
+          self.passive_roots.remove(target_node)
+          self.active_roots.append_node(target_node)
+        # if self.nodes[target_label].data.label == 84045:
+        #   print('84045', self.nodes[target_label].data)
+        #   print('min_node', self.min_node.data)
+        #   print([x.key for x in self.active_roots.get_items()])
+      elif target_node.active == True:
+        target_node.active = False
+        self.active_roots.remove(target_node)
+        self.passive_roots.append_node(target_node)
+
 
   def _link(self, x, y):
     # Convert root x to child of y

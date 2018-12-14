@@ -16,6 +16,7 @@ class RadixHeap2():
     self.bucket_activates = [True for i in range(self.B)]
     self.node_table = [(self.B, self.K, None) for i in range(self.n)] 
     self.len = 0
+    self.debug = False
 
   def insert(self, label, d):
     self._insert(label, self.B - 1, d)
@@ -52,15 +53,22 @@ class RadixHeap2():
     return temp_nodes[min_index].data
 
   def redistribute_segment(self, b, k):
-    if self.u[0] == 1360150:
-      print(self.u)
-      self.print_buckets()
+    if self.u[0] >= 1359900:
+      self.debug = True
+    
+    # if self.debug:
+    #   print('-----------------------------------------------')
+    #   print(self.u)
+    #   self.print_buckets()
     self.len -= 1
     temp_nodes = []
     min_index = 0
     while self.buckets[b][k].len > 0:
       temp_nodes.append(self.buckets[b][k].pop())
       self.bucket_capacities[b] -= 1
+      # if temp_nodes[len(temp_nodes) - 1].data[0] == 84045:
+      #   print(self.print_buckets())
+      #   print(temp_nodes[min_index].data)
       if temp_nodes[min_index].data[1] > temp_nodes[len(temp_nodes) - 1].data[1]:
         min_index = len(temp_nodes) - 1
     # print(temp_nodes, b, k, self.u)
@@ -69,6 +77,9 @@ class RadixHeap2():
     for index, node in enumerate(temp_nodes):
       if index != min_index:
         target_info.append(self._insert(node.data[0], b, node.data[1]))
+    # if self.debug:
+    #   print(self.u)
+    #   self.print_buckets()
 
     return temp_nodes, min_index, target_info
 
@@ -91,6 +102,7 @@ class RadixHeap2():
           print(label, start_index, d, curr_index, curr_k)
           print(self.u)
           print(self.bucket_activates)
+          # self.print_buckets()
         self.bucket_capacities[curr_index] += 1
         node = curr_segment.append((label, d))
         self.node_table[label] = (curr_index, curr_k, node)
@@ -126,6 +138,7 @@ class RadixHeap2():
     #   print('after', self.u)
 
   def print_buckets(self):
+    print('u: ', self.u)
     for i, bucket in enumerate(self.buckets):
       print("bucket " + str(i))
       for j, segment in enumerate(bucket):
