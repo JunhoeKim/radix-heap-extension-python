@@ -28,7 +28,6 @@ class RadixHeap2():
     self._insert(label, b, d)
 
   def delete_min(self):
-
     # If the first bucket is not empty, 
     # find non empty segment then pop and return the node
     if self.bucket_capacities[0] > 0:
@@ -53,6 +52,9 @@ class RadixHeap2():
     return temp_nodes[min_index].data
 
   def redistribute_segment(self, b, k):
+    if self.u[0] == 1360150:
+      print(self.u)
+      self.print_buckets()
     self.len -= 1
     temp_nodes = []
     min_index = 0
@@ -61,6 +63,7 @@ class RadixHeap2():
       self.bucket_capacities[b] -= 1
       if temp_nodes[min_index].data[1] > temp_nodes[len(temp_nodes) - 1].data[1]:
         min_index = len(temp_nodes) - 1
+    # print(temp_nodes, b, k, self.u)
     self._update_u(temp_nodes[min_index].data[1], b, k)
     target_info = []
     for index, node in enumerate(temp_nodes):
@@ -82,7 +85,12 @@ class RadixHeap2():
         curr_index = b + b_offset
         curr_bucket = self.buckets[curr_index]
         curr_k = self._compute_k(curr_index, d)
-        curr_segment = curr_bucket[curr_k]
+        try:
+          curr_segment = curr_bucket[curr_k]
+        except IndexError:
+          print(label, start_index, d, curr_index, curr_k)
+          print(self.u)
+          print(self.bucket_activates)
         self.bucket_capacities[curr_index] += 1
         node = curr_segment.append((label, d))
         self.node_table[label] = (curr_index, curr_k, node)
@@ -104,6 +112,8 @@ class RadixHeap2():
     return self.len
 
   def _update_u(self, d, j, k):
+    # if self.u[0] > 1360000:
+    #   print('before', self.u)
     self.u[0] = d - 1
     upper_bound = self._compute_upper_k(j, k)
     for i in range(1, j + 1):
@@ -112,6 +122,8 @@ class RadixHeap2():
         self.bucket_activates[i] = False
       else:
         self.bucket_activates[i] = True
+    # if self.u[0] > 1360000:
+    #   print('after', self.u)
 
   def print_buckets(self):
     for i, bucket in enumerate(self.buckets):

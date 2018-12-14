@@ -36,17 +36,16 @@ class DoublyList(object):
       return self.pop()
     else:
       self.len -= 1
-      try:
-        node.prev.next = node.next
-      except AttributeError:
-        print(node, node.prev)
-        quit()
+      node.prev.next = node.next
 
       if node.next != None:
         node.next.prev =  node.prev
       if self.tail == node:
         self.tail = node.prev
-      return node
+
+    node.next = None
+    node.prev = None
+    return node
 
   def find_mean(self):
     curr = self.head
@@ -67,6 +66,9 @@ class DoublyList(object):
     else:
       self.head = curr.next
       self.head.prev = None
+
+    curr.next = None
+    curr.prev = None
     return curr
 
   def get_items(self):
