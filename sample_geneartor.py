@@ -1,9 +1,9 @@
 import os, sys
 import random
 
-nodeCount = 20
-arcCountPerNode = 10
-maxDistance = 20
+nodeCount = 50
+# arcCountPerNode = 10
+maxDistance = 50
 
 for i in range(nodeCount):
     # for j in range(random.randint(arcCountPerNode, arcCountPerNode)):
