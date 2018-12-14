@@ -1,5 +1,6 @@
 import os, sys
 from dijkstra import Graph
+import datetime
 
 nodeDic = {}
 nodeCount = 0
@@ -32,12 +33,16 @@ for key in range(nodeCount):
 # print(inputGraphList[:5])
 # print(inputGraphList[-5:])
 
-def printResult(dist):
+def printResult(str, start_time, dist):
+    print("---------------------------")
+    print(str)
     print(len(dist), sum(dist))
-
+    print( int((datetime.datetime.now() - start_time).total_seconds() * 1000) / 1000.0 )
+    print("---------------------------")
+    
 # Run all algoritms
 graph = Graph(nodeCount, C, inputGraphList)
-printResult(graph.dijkstra(0))
-# printResult(graph.dijkstra_radix(0))
-# printResult(graph.dijkstra_radix(0, level='Two level'))
-printResult(graph.dijkstra_radix(0, level='Two level + Fibonacci Heap'))
+printResult("naive heap", datetime.datetime.now(), graph.dijkstra(0))
+printResult("Radix level1", datetime.datetime.now(), graph.dijkstra_radix(0))
+printResult("Radix level2", datetime.datetime.now(), graph.dijkstra_radix(0, level='Two level'))
+printResult("Fib. Heap", datetime.datetime.now(), graph.dijkstra_radix(0, level='Two level + Fibonacci Heap'))
