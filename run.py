@@ -37,7 +37,7 @@ def printResult(dist):
 
 # Run all algoritms
 graph = Graph(nodeCount, C, inputGraphList)
-# printResult(graph.dijkstra(0))
+printResult(graph.dijkstra(0))
 # printResult(graph.dijkstra_radix(0))
-printResult(graph.dijkstra_radix(0, level='Two level'))
-# printResult(graph.dijkstra_radix(0, level='Two level + Fibonacci Heap'))
+# printResult(graph.dijkstra_radix(0, level='Two level'))
+printResult(graph.dijkstra_radix(0, level='Two level + Fibonacci Heap'))
