@@ -1,17 +1,22 @@
 import os, sys
 import random
 
-nodeCount = 5000
+nodeCount = 2000
 # arcCountPerNode = 10
-maxDistance = 5000
-
+maxDistance = 100
+lines = []
 for i in range(nodeCount):
     # for j in range(random.randint(arcCountPerNode, arcCountPerNode)):
     for j in range(i + 1, nodeCount):
-        dist = random.randint(1, maxDistance) + maxDistance - i
+        # dist = random.randint(1, maxDistance) + maxDistance - i
+        dist = random.randint(1, maxDistance)
         # dic[str(i) + " " + str(j)] = dist
         # dic[str(j) + " " + str(i))] = dist
-        print("a", i+1, j+1, dist)
-        print("a", j+1, i+1, dist)
+        lines.append("a " + str(i+1) + " " + str(j+1) + " " + str(dist))
+        lines.append("a " + str(j+1) + " " + str(i+1) + " " + str(dist))
         # print("a", i, random.randint(0, nodeCount), random.randint(1, maxDistance+1))
 
+f = open(sys.argv[1], "w")
+for l in lines:
+    f.write(l)
+    f.write("\n")

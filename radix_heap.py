@@ -2,6 +2,7 @@ import sys
 import heapq
 import math
 from doubly_list import DoublyList, Node
+import datetime
 
 class RadixHeap():
   
@@ -16,16 +17,34 @@ class RadixHeap():
     self.bucket_activates = [True for i in range(self.B)]
     self.len = 0
 
+    self.insertCallCount = 0
+    self.decreseCallCount = 0
+    self._insertCallCount = 0
+    self.delete_minCallCount = 0
+    self.updateUCallCount = 0
+    self.insertTime = 0
+    self.deleteMinTime = 0
+    # print(self.B)
+
+  def printResult(self):
+    # print(self.insertCallCount, self.decreseCallCount, self._insertCallCount, self.delete_minCallCount, self.updateUCallCount)
+    # print(self.insertTime / 1000.0, self.deleteMinTime/1000.0)
+    return
+
   def insert(self, label, d):
+    self.insertCallCount += 1
     self._insert(label, self.B - 1, d)
     self.len += 1
 
   def decrease(self, label, d):
+    self.decreseCallCount += 1
     b, node = self.node_table[label]
     self.buckets[b].remove(node)
     self._insert(label, b, d)
 
   def _insert(self, label, start_index, d):
+    st = datetime.datetime.now()
+    self._insertCallCount += 1
     b_offset = 0
     # Find the appropriate bucket index according to upper bound values (u)
     for i in range(start_index + 1):
@@ -45,11 +64,15 @@ class RadixHeap():
 
       if self.bucket_activates[b] == True:
         b_offset = 0
+    self.insertTime += int((datetime.datetime.now() - st).total_seconds() * 1000)
 
   def delete_min(self):
+    st = datetime.datetime.now()
+    self.delete_minCallCount += 1
     self.len -= 1
     # If the first bucket is not empty, just pop and return the node
     if self.buckets[0].len > 0:
+      self.deleteMinTime += int((datetime.datetime.now() - st).total_seconds() * 1000)
       return self.buckets[0].pop().data
     temp_nodes = []
     min_index = 0
@@ -67,12 +90,14 @@ class RadixHeap():
         break
 
     # self.print_bucket_capacities()
+    self.deleteMinTime += int((datetime.datetime.now() - st).total_seconds() * 1000)
     return temp_nodes[min_index].data
 
   def __len__(self):
     return self.len
 
   def _update_u(self, d, j):
+    self.updateUCallCount += 1
     self.u[0] = d - 1
     self.u[1] = d
     for i in range(2, j + 1):

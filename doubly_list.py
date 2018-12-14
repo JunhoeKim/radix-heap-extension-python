@@ -67,8 +67,8 @@ class DoublyList(object):
       self.head = curr.next
       self.head.prev = None
 
-    curr.next = None
-    curr.prev = None
+    # curr.next = None
+    # curr.prev = None
     return curr
 
   def get_items(self):

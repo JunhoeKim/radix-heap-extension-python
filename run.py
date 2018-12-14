@@ -42,7 +42,8 @@ def printResult(str, start_time, dist):
     
 # Run all algoritms
 graph = Graph(nodeCount, C, inputGraphList)
-printResult("naive heap", datetime.datetime.now(), graph.dijkstra(0))
+printResult("heapq", datetime.datetime.now(), graph.dijkstra(0))
+printResult("naive heap", datetime.datetime.now(), graph.dijkstra_naive(0))
 printResult("Radix level1", datetime.datetime.now(), graph.dijkstra_radix(0))
 printResult("Radix level2", datetime.datetime.now(), graph.dijkstra_radix(0, level='Two level'))
 printResult("Fib. Heap", datetime.datetime.now(), graph.dijkstra_radix(0, level='Two level + Fibonacci Heap'))

@@ -3,6 +3,7 @@ import heapq
 from radix_heap import RadixHeap
 from radix_heap_2 import RadixHeap2
 from f_heap import FibonacciHeap
+from heap import Heap
 
 class Graph():
     def __init__(self, nodeCount, C, graphList):
@@ -44,6 +45,34 @@ class Graph():
 
         return dist
         #print("Minheap : " + str(dist))
+    
+    def naiveComparator(self, a, b):
+        if a[1] >= b[1]:
+            return True
+        else:
+            return False
+
+    def dijkstra_naive(self, src):
+        dist = [sys.maxsize] * self.n
+        dist[src] = 0
+        naiveHeap = Heap(self.naiveComparator)
+
+        naiveHeap.add((0, src))
+
+        while not naiveHeap.is_empty():
+            top_vertex = naiveHeap.del_min()
+            u = top_vertex[1]
+            if dist[u] < top_vertex[0]:
+                continue
+
+            for edge in self.graph[u]:
+                weight = edge[1]
+                v = edge[0]
+                if dist[v] > dist[u] + weight:
+                    dist[v] = dist[u] + weight
+                    naiveHeap.add((dist[v], v))
+
+        return dist
 
     def dijkstra_radix(self, src, level='One Level'):
         radixheap = None
@@ -75,6 +104,8 @@ class Graph():
                         radixheap.decrease(v, dist[v])
       
         #print(level + " : " + str(dist))
+        if level == "One Level":
+            radixheap.printResult()
         return dist
 
 # graph = Graph()
