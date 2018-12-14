@@ -53,9 +53,15 @@ class RadixHeap2():
     return temp_nodes[min_index].data
 
   def redistribute_segment(self, b, k):
-    if self.u[0] >= 1359900:
-      self.debug = True
+    if self.u[0] >= 1383600 and self.u[0] < 1383700:
+      self.debug = False
     
+    if self.debug:
+      print('-------------------------------------------')
+      self.print_buckets()
+      print('')
+      print('')
+
     self.len -= 1
     temp_nodes = []
     min_index = 0
@@ -64,13 +70,14 @@ class RadixHeap2():
       self.bucket_capacities[b] -= 1
       if temp_nodes[min_index].data[1] > temp_nodes[len(temp_nodes) - 1].data[1]:
         min_index = len(temp_nodes) - 1
-
     self._update_u(temp_nodes[min_index].data[1], b, k)
     target_info = []
     for index, node in enumerate(temp_nodes):
       if index != min_index:
         target_info.append(self._insert(node.data[0], b, node.data[1]))
 
+    # if self.debug:
+    #   self.print_buckets()
     return temp_nodes, min_index, target_info
 
 
@@ -108,8 +115,6 @@ class RadixHeap2():
     return self.len
 
   def _update_u(self, d, j, k):
-    # if self.u[0] > 1360000:
-    #   print('before', self.u)
     self.u[0] = d - 1
     upper_bound = self._compute_upper_k(j, k)
     for i in range(1, j + 1):
@@ -118,8 +123,6 @@ class RadixHeap2():
         self.bucket_activates[i] = False
       else:
         self.bucket_activates[i] = True
-    # if self.u[0] > 1360000:
-    #   print('after', self.u)
 
   def print_buckets(self):
     print('u: ', self.u)

@@ -43,16 +43,15 @@ class FibonacciHeap():
 
   def decrease(self, label, d):
     # Decrease a labeled node
+
     self.radixHeap.decrease(label, d)
 
     b, k, _ = self.radixHeap.node_table[label]
     key = b * self.K + k
     node = self.nodes[label]
     prev_key = node.data.key
-
     # Update a new key of heap node
     node.data = NodeData(label=label, key=key)
-    self._update_min(node)
 
     # If heap condition is violated, do link cut process
     if node.parent != None and node.parent.data.key > node.data.key:
@@ -63,6 +62,7 @@ class FibonacciHeap():
     # Remove the node from the previous set
     self.S[prev_key].remove(label)
     # If there are remaining nodes in the previous segment, assign a new node as a representative
+    new_representative = None
     if len(self.S[prev_key]) > 0 and node.active == True:
       new_representative = self.nodes[next(iter(self.S[prev_key]))]
       new_representative.active = True
@@ -74,6 +74,8 @@ class FibonacciHeap():
 
     # If the new set already has a representative, remove a node as a representative
     if len(self.S[key]) > 1 and node.active == True:
+      if self.min_node.data.label == label:
+        self.min_node = None
       node.active = False
       self.active_roots.remove(node)
       self.passive_roots.append_node(node)
@@ -84,8 +86,23 @@ class FibonacciHeap():
       self.passive_roots.remove(node)
       self.active_roots.append_node(node)
 
+    self._update_min(node)
+
+    if new_representative != None:
+      self._update_min(new_representative)
+    
+
   def delete_min(self):
     # print([x.key for x in self.active_roots.get_items()])
+    is_debug = False
+    # if self.radixHeap.u[0] >= 1382852:
+    #   is_debug = True
+
+    # if is_debug:
+    #   print('debug')
+    #   print(self.S[14])
+    #   print(self.active_roots.get_items())
+    #   # print(self.min_node.data)
     min_key = self.min_node.data.key
     b = min_key // self.K
     k = min_key - b * self.K
@@ -187,17 +204,13 @@ class FibonacciHeap():
         self.rank_nodes[rank + 1] = new_root
         if max_rank < rank + 1:
           max_rank = rank + 1
-      if root.data.label == 84045:
-        print('root', root.data)
-        print(self.min_node.data)
-        print('new_root', new_root.data)
       self._update_min(new_root)
 
     for i in range(max_rank):
       self.rank_nodes[i] = None
 
   def _update_min(self, node):
-    if self.min_node == None or self.min_node.data.key > node.data.key:
+    if node.active == True and (self.min_node == None or self.min_node.data.key > node.data.key):
       self.min_node = node
 
   def _redistribute_nodes(self, target_info):
@@ -212,16 +225,12 @@ class FibonacciHeap():
 
       self.S[target_key].add(target_label)
       target_node.data = NodeData(label=target_label, key=target_key)
-
+      if target_label in [84412, 84404, 84382, 84420, 91458]:
+        print(self.S[14], target_key, target_label)
       if len(self.S[target_key]) == 1:
-          target_node.active = True
-
-          self.passive_roots.remove(target_node)
-          self.active_roots.append_node(target_node)
-        # if self.nodes[target_label].data.label == 84045:
-        #   print('84045', self.nodes[target_label].data)
-        #   print('min_node', self.min_node.data)
-        #   print([x.key for x in self.active_roots.get_items()])
+        target_node.active = True
+        self.passive_roots.remove(target_node)
+        self.active_roots.append_node(target_node)
 
   def _link(self, x, y):
     # Convert root x to child of y
