@@ -113,25 +113,25 @@ class FibonacciHeap():
       return self.radixHeap.delete_min()
 
     else:
-      temp_nodes, min_index, target_info = self.radixHeap.redistribute_segment(b, k)
+      min_node, redistributed_info = self.radixHeap.redistribute(b, k)
       self.S[min_key] = set()
-      min_label = temp_nodes[min_index].data[0]
-      if len(target_info) > 0:
+      min_label = min_node.data[0]
+      if len(redistributed_info) > 0:
         # If the actual minimum node is in active trees
         if min_label == self.min_node.data.label:
           # Redistribute
-          self._redistribute_nodes(target_info)
+          self._redistribute(redistributed_info)
           # Remove the remaining minimum node and do linking operation
           self._extract_min_in_tree()
         else:
           # Insert the node that was in the active root first
-          prev_active_node_index = [i for i, target in enumerate(target_info) if target[2].data[0] == self.min_node.data.label][0]
-          target = target_info[prev_active_node_index]
+          prev_active_node_index = [i for i, target in enumerate(redistributed_info) if target[2].data[0] == self.min_node.data.label][0]
+          target = redistributed_info[prev_active_node_index]
           node_key = target[0] * self.K + target[1]
           self.S[node_key].add(target[2].data[0])
           self.min_node.data = NodeData(label=self.min_node.data.label, key=node_key)
           # Redistribute
-          self._redistribute_nodes(target_info)
+          self._redistribute(redistributed_info)
           # Remove minimum node which is not a representative from the passive trees and do linking operation
           self.passive_roots.remove(self.nodes[min_label])
           self._consolidate()
@@ -202,8 +202,8 @@ class FibonacciHeap():
     if node.active == True and (self.min_node == None or self.min_node.data.key > node.data.key):
       self.min_node = node
 
-  def _redistribute_nodes(self, target_info):
-    for target in target_info:
+  def _redistribute(self, redistributed_info):
+    for target in redistributed_info:
       target_label = target[2].data[0]
       target_key = target[0] * self.K + target[1]
       target_node = self.nodes[target_label]

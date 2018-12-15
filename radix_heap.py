@@ -80,7 +80,7 @@ class RadixHeap():
     st = datetime.datetime.now()
     self._insertCallCount += 1
     b_offset = 0
-    # Find the appropriate bucket index according to upper bounds
+    # Find the appropriate bucket index according to the upper bounds
     for i in range(start_index + 1):
       b = start_index - i
 
