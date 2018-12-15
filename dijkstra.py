@@ -74,10 +74,10 @@ class Graph():
 
         return dist
 
-    def dijkstra_radix(self, src, level='One Level'):
+    def dijkstra_radix(self, src, level='One Level', debug=False):
         radixheap = None
         if level == 'One Level':
-            radixheap = RadixHeap(self.n, self.C)
+            radixheap = RadixHeap(self.n, self.C, debug=debug)
         elif level == 'Two level':
             radixheap = RadixHeap2(self.n, self.C, 2)
         else:
@@ -107,9 +107,3 @@ class Graph():
         if level == "One Level":
             radixheap.printResult()
         return dist
-
-# graph = Graph()
-# graph.dijkstra(0)
-# graph.dijkstra_radix(0)
-# graph.dijkstra_radix(0, level='Two level')
-# graph.dijkstra_radix(0, level='Two level + Fibonacci Heap')

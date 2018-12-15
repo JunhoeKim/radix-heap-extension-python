@@ -16,7 +16,6 @@ class RadixHeap2():
     self.bucket_activates = [True for i in range(self.B)]
     self.node_table = [(self.B, self.K, None) for i in range(self.n)] 
     self.len = 0
-    self.debug = False
 
   def insert(self, label, d):
     self._insert(label, self.B - 1, d)
@@ -53,14 +52,6 @@ class RadixHeap2():
     return temp_nodes[min_index].data
 
   def redistribute_segment(self, b, k):
-    if self.u[0] >= 1383600 and self.u[0] < 1383700:
-      self.debug = False
-    
-    if self.debug:
-      print('-------------------------------------------')
-      self.print_buckets()
-      print('')
-      print('')
 
     self.len -= 1
     temp_nodes = []
@@ -76,10 +67,7 @@ class RadixHeap2():
       if index != min_index:
         target_info.append(self._insert(node.data[0], b, node.data[1]))
 
-    # if self.debug:
-    #   self.print_buckets()
     return temp_nodes, min_index, target_info
-
 
   def _insert(self, label, start_index, d):
     b_offset = 0

@@ -47,16 +47,6 @@ class DoublyList(object):
     node.prev = None
     return node
 
-  def find_mean(self):
-    curr = self.head
-    min_node = self.head
-    while curr.next != None:
-      curr = curr.next
-      if min_node.data[1] > curr.data[1]:
-        min_node = curr
-
-    return min_node
-
   def pop(self):
     self.len -= 1
     curr = self.head
@@ -67,8 +57,6 @@ class DoublyList(object):
       self.head = curr.next
       self.head.prev = None
 
-    # curr.next = None
-    # curr.prev = None
     return curr
 
   def get_items(self):

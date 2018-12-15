@@ -93,20 +93,9 @@ class FibonacciHeap():
     
 
   def delete_min(self):
-    # print([x.key for x in self.active_roots.get_items()])
-    is_debug = False
-    # if self.radixHeap.u[0] >= 1382852:
-    #   is_debug = True
-
-    # if is_debug:
-    #   print('debug')
-    #   print(self.S[14])
-    #   print(self.active_roots.get_items())
-    #   # print(self.min_node.data)
     min_key = self.min_node.data.key
     b = min_key // self.K
     k = min_key - b * self.K
-    # self.radixHeap.print_buckets()
 
     # If the minimum node is in a first segment, there is no redistribution process
     if min_key == 0:
@@ -225,8 +214,6 @@ class FibonacciHeap():
 
       self.S[target_key].add(target_label)
       target_node.data = NodeData(label=target_label, key=target_key)
-      if target_label in [84412, 84404, 84382, 84420, 91458]:
-        print(self.S[14], target_key, target_label)
       if len(self.S[target_key]) == 1:
         target_node.active = True
         self.passive_roots.remove(target_node)
