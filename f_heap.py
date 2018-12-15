@@ -113,7 +113,7 @@ class FibonacciHeap():
       return self.radixHeap.delete_min()
 
     else:
-      min_node, redistributed_info = self.radixHeap.redistribute(b, k)
+      min_node, redistributed_info = self.radixHeap._redistribute(b, k)
       self.S[min_key] = set()
       min_label = min_node.data[0]
       if len(redistributed_info) > 0:
