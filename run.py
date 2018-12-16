@@ -35,10 +35,7 @@ for key in range(nodeCount):
 
 def printResult(str, start_time, dist):
     print("---------------------------")
-    print(str)
-    print(len(dist), sum(dist))
-    print( int((datetime.datetime.now() - start_time).total_seconds() * 1000) / 1000.0 )
-    print("---------------------------")
+    print(str, ":", int((datetime.datetime.now() - start_time).total_seconds() * 1000) / 1000.0, len(dist), sum(dist))
     
 # Run all algoritms
 graph = Graph(nodeCount, C, inputGraphList)
