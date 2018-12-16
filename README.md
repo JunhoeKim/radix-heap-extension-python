@@ -13,10 +13,7 @@
  - [algorithm] : [elapsed time] [path count] [distance sum]
 
 ### how to run
- - python run.py [input file]
-
-### description for demo
- - 여기 추가 필요
+ - python run.py [input file] [mode] (if mode is 1, print state of heap for each step)
 
 ### running example
 ~~~

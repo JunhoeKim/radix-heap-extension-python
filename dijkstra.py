@@ -81,7 +81,7 @@ class Graph():
         elif level == 'Two level':
             radixheap = RadixHeap2(self.n, self.C, 4, debug=debug)
         else:
-            radixheap = FibonacciHeap(self.n, self.C, 4)
+            radixheap = FibonacciHeap(self.n, self.C, 4, debug=debug)
         dist = [self.n * self.C + 1] * self.n
         dist[src] = 0
         radixheap.insert(src, dist[src])

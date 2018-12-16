@@ -39,8 +39,9 @@ def printResult(str, start_time, dist):
     
 # Run all algoritms
 graph = Graph(nodeCount, C, inputGraphList)
+debug = True if len(sys.argv) > 2 and sys.argv[2] == '1' else False
 # printResult("heapq", datetime.datetime.now(), graph.dijkstra(0))
-printResult("Radix level1", datetime.datetime.now(), graph.dijkstra_radix(0, debug=False))
-printResult("Radix level2", datetime.datetime.now(), graph.dijkstra_radix(0, level='Two level', debug=False))
-printResult("Fib. Heap", datetime.datetime.now(), graph.dijkstra_radix(0, level='Two level + Fibonacci Heap'))
+printResult("Radix level1", datetime.datetime.now(), graph.dijkstra_radix(0, debug=debug))
+printResult("Radix level2", datetime.datetime.now(), graph.dijkstra_radix(0, level='Two level', debug=debug))
+printResult("Fib. Heap", datetime.datetime.now(), graph.dijkstra_radix(0, level='Two level + Fibonacci Heap', debug=debug))
 printResult("naive heap", datetime.datetime.now(), graph.dijkstra_naive(0))

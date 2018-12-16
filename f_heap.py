@@ -30,7 +30,7 @@ class FibonacciHeap():
     self.n = n
     self.K = K
     self.B = int(math.ceil(math.log(C + 1, K)) + 1)
-    self.radix_heap = RadixHeap2(n, C, K)
+    self.radix_heap = RadixHeap2(n, C, K, debug=debug)
 
     # Node that has minimum segment index
     self.min_node = None
@@ -42,8 +42,6 @@ class FibonacciHeap():
     self.passive_roots = DoublyList()
     self.rank_nodes = [None] * n
     self.debug = debug
-    self.radix_heap.debug = debug
-    self.debug = True
 
   def insert(self, label, d):
     # Insert a labeled node to radix heap
@@ -194,6 +192,7 @@ class FibonacciHeap():
     
     result = self.radix_heap.node_table[min_label][2].data
     if self.debug:
+      self.radix_heap.print_buckets('delete min label : %s, distance: %s' % result)
       self.print_heap('delete min label : %s, distance: %s' % result) 
     return result
     
