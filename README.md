@@ -1,11 +1,13 @@
 ## Python implementation for radix heap extension
 
 ### input format (for shortest path)
- - followed the format of shortest paths implementation challenge
-   (http://www.dis.uniroma1.it/challenge9/download.shtml) 
  - [command] [parentNode] [childNode] [distance]
    ex) a 1 3 10
+ - followed the format of shortest paths implementation challenge
+   (http://www.dis.uniroma1.it/challenge9/download.shtml) 
  - input files placed in /inputs/*
+ - ** show better performance node1000_mod.txt over node1000.txt
+   (C is 100 in node1000_mod, but in 1000 in node1000)
 
 ### output format
  - [algorithm] : [elapsed time] [path count] [distance sum]
