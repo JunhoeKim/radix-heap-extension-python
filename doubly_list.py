@@ -5,7 +5,6 @@ class Node(object):
     self.prev = None
     self.next = None
     self.children = DoublyList() 
-    self.rank = 0
     self.mark = False
     self.active = False
 
@@ -57,6 +56,7 @@ class DoublyList(object):
       self.head = curr.next
       self.head.prev = None
 
+    curr.next = None
     return curr
 
   def get_items(self):
