@@ -30,7 +30,7 @@ class FibonacciHeap():
     self.n = n
     self.K = K
     self.B = int(math.ceil(math.log(C + 1, K)) + 1)
-    self.radix_heap = RadixHeap2(n, C, K, debug=debug)
+    self.heap = RadixHeap2(n, C, K, debug=debug)
 
     # Node that has minimum segment index
     self.min_node = None
@@ -45,8 +45,11 @@ class FibonacciHeap():
 
   def insert(self, label, d):
     # Insert a labeled node to radix heap
-    b, k, _ = self.radix_heap._insert(label, self.B - 1, d)
-    self.radix_heap.len += 1
+    b, k, _ = self.heap._insert(label, self.B - 1, d)
+    if self.debug == True:
+      self.heap.print_buckets('insert label : %s, distance: %s' % (label, d))
+
+    self.heap.len += 1
     # Retrieve heap key from bucket index (b) and segment index (k)
     key = b * self.K + k 
     # Append a new node to root trees
@@ -68,9 +71,9 @@ class FibonacciHeap():
 
   def decrease(self, label, d):
     # Decrease a labeled node
-    self.radix_heap.decrease(label, d)
+    self.heap.decrease(label, d)
 
-    b, k, _ = self.radix_heap.node_table[label]
+    b, k, _ = self.heap.node_table[label]
     key = b * self.K + k
     node = self.nodes[label]
     prev_key = node.data.key
@@ -156,7 +159,7 @@ class FibonacciHeap():
 
       # Extract min and do a linking operation
       self._extract_min_in_tree()
-      result = self.radix_heap.delete_min()
+      result = self.heap.delete_min()
 
       if self.debug == True:
         self.print_heap('delete min label : %s, distance: %s' % result)
@@ -164,7 +167,7 @@ class FibonacciHeap():
       return result
 
     else:
-      min_node, redistributed_info = self.radix_heap._redistribute(b, k)
+      min_node, redistributed_info = self.heap._redistribute(b, k)
       self.S[min_key] = set()
       min_label = min_node.data[0]
       if len(redistributed_info) > 0:
@@ -190,14 +193,14 @@ class FibonacciHeap():
       else:
         self._extract_min_in_tree()
     
-    result = self.radix_heap.node_table[min_label][2].data
+    result = self.heap.node_table[min_label][2].data
     if self.debug:
-      self.radix_heap.print_buckets('delete min label : %s, distance: %s' % result)
+      self.heap.print_buckets('delete min label : %s, distance: %s' % result)
       self.print_heap('delete min label : %s, distance: %s' % result) 
     return result
     
   def __len__(self):
-    return len(self.radix_heap)
+    return len(self.heap)
 
   # Extract minimum node to delete, do consolidate operation
   def _extract_min_in_tree(self):

@@ -42,7 +42,7 @@ class RadixHeap2():
   def insert(self, label, d):
     self._insert(label, self.B - 1, d)
     self.len += 1
-    if self.debug:
+    if self.debug == True:
       self.print_buckets('insert label : %s, distance: %s' % (label, d))
 
   def decrease(self, label, d):
@@ -50,7 +50,7 @@ class RadixHeap2():
     self.buckets[b][k].remove(node)
     self.bucket_lens[b] -= 1
     self._insert(label, b, d)
-    if self.debug:
+    if self.debug == True:
       self.print_buckets('decrease label: %s, distance: %s' % (label, d))
 
   def delete_min(self):
@@ -149,13 +149,6 @@ class RadixHeap2():
         self.bucket_availables[i] = False
       else:
         self.bucket_availables[i] = True
-
-  # def print_buckets(self):
-  #   print('u: ', self.u)
-  #   for i, bucket in enumerate(self.buckets):
-  #     print("bucket " + str(i))
-  #     for j, segment in enumerate(bucket):
-  #       print("segment " + str(j) + str(segment.get_items()))
 
   def print_buckets(self, op_name):
     title_str = '* ------ Operation: %s ------- *' % op_name 

@@ -1,9 +1,10 @@
 import os, sys
 from dijkstra import Graph
+from collections import defaultdict
 import datetime
 
-nodeDic = {}
-nodeCount = 0
+node_dict = defaultdict(lambda: [])
+n = 0
 C = 0
 # Sample data used on http://www.dis.uniroma1.it/challenge9/download.shtml
 # input file format also follows origin file format.
@@ -11,37 +12,31 @@ C = 0
 for line in open(sys.argv[1]):
     line = line.strip()
     if line.startswith("a"):
-        command, parentNode, childNode, distance = line.split()
+        command, parent_node, child_node, distance = line.split()
         
-        parentNode = int(parentNode) - 1
-        childNode = int(childNode) - 1
+        parent_node = int(parent_node) - 1
+        child_node = int(child_node) - 1
         distance = int(distance)
         if C < distance:
             C = distance
 
         # save data in dictionary
-        nodeDic.setdefault(parentNode, []).append((childNode, distance))
+        node_dict[parent_node].append((child_node, distance))
     else:
         continue
 
-# convert dictionary to graph list
-inputGraphList = []
-nodeCount = max(nodeDic.keys()) + 1
-for key in range(nodeCount):
-    inputGraphList.append(nodeDic.setdefault(key, []))    
+# Convert dictionary to graph list
+n = max(node_dict.keys()) + 1
+adjacents = [x[1] for x in sorted(node_dict.items(), key=lambda x: x[0])]
 
-# print(inputGraphList[:5])
-# print(inputGraphList[-5:])
-
-def printResult(str, start_time, dist):
+def print_result(str, start_time, dist):
     print("---------------------------")
     print(str, ":", int((datetime.datetime.now() - start_time).total_seconds() * 1000) / 1000.0, len(dist), sum(dist))
     
 # Run all algoritms
-graph = Graph(nodeCount, C, inputGraphList)
+graph = Graph(n, C, adjacents)
 debug = True if len(sys.argv) > 2 and sys.argv[2] == '1' else False
-# printResult("heapq", datetime.datetime.now(), graph.dijkstra(0))
-printResult("Radix level1", datetime.datetime.now(), graph.dijkstra_radix(0, debug=debug))
-printResult("Radix level2", datetime.datetime.now(), graph.dijkstra_radix(0, level='Two level', debug=debug))
-printResult("Fib. Heap", datetime.datetime.now(), graph.dijkstra_radix(0, level='Two level + Fibonacci Heap', debug=debug))
-printResult("naive heap", datetime.datetime.now(), graph.dijkstra_naive(0))
+print_result("heapq", datetime.datetime.now(), graph.dijkstra_naive(0))
+print_result("Radix level1", datetime.datetime.now(), graph.dijkstra_radix(0, debug=debug))
+print_result("Radix level2", datetime.datetime.now(), graph.dijkstra_radix(0, level='Two level', debug=debug))
+print_result("Fib. Heap", datetime.datetime.now(), graph.dijkstra_radix(0, level='Two level + Fibonacci Heap', debug=debug))

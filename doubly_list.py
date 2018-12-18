@@ -86,3 +86,6 @@ class DoublyList(object):
       nodes.append(curr)
 
     return nodes
+
+  def __len__(self):
+    return self.len

@@ -6,25 +6,13 @@ from f_heap import FibonacciHeap
 from heap import Heap
 
 class Graph():
-    def __init__(self, nodeCount, C, graphList):
-        self.n = nodeCount
+    def __init__(self, n, C, adjacents):
+        self.n = n
         self.C = C
-        
-        # sample data for test
-        # self.graph = [
-        #     [(1, 12), (3, 14), (4, 20), (2, 0)],
-        #     [(0, 12), (3, 4)],
-        #     [(0, 0), (4, 8)],
-        #     [(0, 14), (1, 4), (4, 5), (5, 3)],
-        #     [(0, 20), (2, 8), (3, 5), (5, 9)],
-        #     [(3, 3), (4, 9)]
-        # ]
-
-        # label, distance
-        self.graph = graphList
+        self.adjacents = adjacents
 
     # O(mlogn) Implementation
-    def dijkstra(self, src):
+    def dijkstra_naive(self, src):
         dist = [sys.maxsize] * self.n
         dist[src] = 0
         h = []
@@ -36,7 +24,7 @@ class Graph():
             if dist[u] < top_vertex[0]:
                 continue
 
-            for edge in self.graph[u]:
+            for edge in self.adjacents[u]:
                 weight = edge[1]
                 v = edge[0]
                 if dist[v] > dist[u] + weight:
@@ -44,36 +32,7 @@ class Graph():
                     heapq.heappush(h, (dist[v], v))
 
         return dist
-        #print("Minheap : " + str(dist))
     
-    def naiveComparator(self, a, b):
-        if a[1] >= b[1]:
-            return True
-        else:
-            return False
-
-    def dijkstra_naive(self, src):
-        dist = [sys.maxsize] * self.n
-        dist[src] = 0
-        naiveHeap = Heap(self.naiveComparator)
-
-        naiveHeap.add((0, src))
-
-        while not naiveHeap.is_empty():
-            top_vertex = naiveHeap.del_min()
-            u = top_vertex[1]
-            if dist[u] < top_vertex[0]:
-                continue
-
-            for edge in self.graph[u]:
-                weight = edge[1]
-                v = edge[0]
-                if dist[v] > dist[u] + weight:
-                    dist[v] = dist[u] + weight
-                    naiveHeap.add((dist[v], v))
-
-        return dist
-
     def dijkstra_radix(self, src, level='One Level', debug=False):
         radixheap = None
         if level == 'One Level':
@@ -92,7 +51,7 @@ class Graph():
             if dist[u] < top_vertex[1]:
                 continue
 
-            for edge in self.graph[u]:
+            for edge in self.adjacents[u]:
                 v = edge[0]
                 weight = edge[1]
                 if dist[v] > dist[u] + weight:
@@ -103,7 +62,4 @@ class Graph():
                         dist[v] = dist[u] + weight
                         radixheap.decrease(v, dist[v])
       
-        #print(level + " : " + str(dist))
-        if level == "One Level":
-            radixheap.printResult()
         return dist

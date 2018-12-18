@@ -40,18 +40,7 @@ class RadixHeap():
     self.bucket_availables = [True for i in range(self.B)]
     # The number of labeled nodes in the heap
     self.len = 0
-
-    # Variables for statistics
-    self.insertCallCount = 0
-    self.decreseCallCount = 0
-    self._insertCallCount = 0
-    self.delete_minCallCount = 0
-    self.updateUCallCount = 0
-    self.insertTime = 0
-    self.deleteMinTime = 0
     self.debug = debug
-    if self.debug:
-      self.print_buckets('init')
 
   def printResult(self):
     # print(self.insertCallCount, self.decreseCallCount, self._insertCallCount, self.delete_minCallCount, self.updateUCallCount)
@@ -60,7 +49,6 @@ class RadixHeap():
 
   # Find an appropraite bucket to insert the node from the index of the last bucket
   def insert(self, label, d):
-    self.insertCallCount += 1
     self._insert(label, self.B - 1, d)
     self.len += 1
     if self.debug:
@@ -69,7 +57,6 @@ class RadixHeap():
 
   # Remove the node from the original bucket and insert the node from the index of the bucket
   def decrease(self, label, d):
-    self.decreseCallCount += 1
     b, node = self.node_table[label]
     self.buckets[b].remove(node)
     self._insert(label, b, d)
@@ -77,8 +64,6 @@ class RadixHeap():
       self.print_buckets('decrease label: %s, distance: %s' % (label, d))
 
   def _insert(self, label, start_index, d):
-    st = datetime.datetime.now()
-    self._insertCallCount += 1
     b_offset = 0
     # Find the appropriate bucket index according to the upper bounds
     for i in range(start_index + 1):
@@ -98,16 +83,12 @@ class RadixHeap():
 
       if self.bucket_availables[b] == True:
         b_offset = 0
-    self.insertTime += int((datetime.datetime.now() - st).total_seconds() * 1000)
 
   # Remove the minimum node from the left most bucket and redistribute the nodes from the bucket
   def delete_min(self):
-    st = datetime.datetime.now()
-    self.delete_minCallCount += 1
     self.len -= 1
     # If the first bucket is not empty, just pop and return the node
-    if self.buckets[0].len > 0:
-      self.deleteMinTime += int((datetime.datetime.now() - st).total_seconds() * 1000)
+    if len(self.buckets[0]) > 0:
       min_node = self.buckets[0].pop()
       if self.debug:
         self.print_buckets('delete min label: %s, distance: %s' % min_node.data)
@@ -117,10 +98,10 @@ class RadixHeap():
     min_index = 0
     # Find left most non empty bucket, find minimum node, reset upper bounds, redistribute
     for i in range(self.B):
-      if self.buckets[i].len > 0:
+      if len(self.buckets[i]) > 0:
 
         # Extract all nodes and find minimum node at the same time
-        while self.buckets[i].len > 0:
+        while len(self.buckets[i]) > 0:
           moved_nodes.append(self.buckets[i].pop())
           if moved_nodes[min_index].data[1] > moved_nodes[len(moved_nodes) - 1].data[1]:
             min_index = len(moved_nodes) - 1
@@ -134,15 +115,12 @@ class RadixHeap():
             self._insert(node.data[0], i, node.data[1])
         break
 
-    self.deleteMinTime += int((datetime.datetime.now() - st).total_seconds() * 1000)
-
     if self.debug:
       self.print_buckets('delete min label: %s, distance: %s' % moved_nodes[min_index].data)
     return moved_nodes[min_index].data
 
   # Update upper bounds using the mimimum distance and sizes
   def _update_u(self, d, j):
-    self.updateUCallCount += 1
     self.u[0] = d - 1
     self.u[1] = d
     for i in range(2, j + 1):
@@ -163,5 +141,3 @@ class RadixHeap():
         print(' ' + str((self.u[i], '~')) + ' ' + str(x.get_items()))
 
     print ('\n* ' + '-' * (len(title_str) - 4) + ' *')
-
-
