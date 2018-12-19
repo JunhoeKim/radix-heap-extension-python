@@ -1,6 +1,6 @@
 ## Python implementation for radix heap extension
 
-### input format (for shortest path)
+### Input format (for shortest path)
  - [command] [parentNode] [childNode] [distance]
    ex) a 1 3 10
  - followed the format of shortest paths implementation challenge
@@ -9,16 +9,13 @@
  - ** show better performance node1000_mod.txt over node1000.txt
    (C is 100 in node1000_mod, but in 1000 in node1000)
 
-### output format
- - [algorithm] : [elapsed time] [path count] [distance sum]
-
-### how to run
+### How to run
  - python run.py [input file] [mode] (if mode is 1, print state of heap for each step)
 
-### running example
+### Running example
 ~~~
 > & python run.py .\inputs\node1000.txt
-[data structure] : [elapsed time] [n] [distance]
+Output format: [data structure] : [elapsed time] [n] [distance]
 ---------------------------
 Heapq : 0.402 1000 1376856
 ---------------------------
