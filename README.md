@@ -17,15 +17,16 @@
 
 ### running example
 ~~~
-> & python run.py .\inputs\node2000.txt
+> & python run.py .\inputs\node1000.txt
+[data structure] : [elapsed time] [n] [distance]
 ---------------------------
-naive heap : 1.91 2000 5540
+Heapq : 0.402 1000 1376856
 ---------------------------
-Radix level1 : 1.055 2000 5540
+Radix level1 : 0.57 1000 1376856
 ---------------------------
-Radix level2 : 0.976 2000 5540
+Radix level2 : 0.435 1000 1376856
 ---------------------------
-Fib. Heap : 12.983 2000 5540
+Fib. Heap : 0.525 1000 1376856
 ~~~
 
 Reference

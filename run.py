@@ -32,10 +32,12 @@ adjacents = [x[1] for x in sorted(node_dict.items(), key=lambda x: x[0])]
 def print_result(str, start_time, dist):
     print("---------------------------")
     print(str, ":", int((datetime.datetime.now() - start_time).total_seconds() * 1000) / 1000.0, len(dist), sum(dist))
-    
+
+
 # Run all algoritms
 graph = Graph(n, C, adjacents)
-debug = True if len(sys.argv) > 2 and sys.argv[2] == '1' else False
+debug = True if '-v' in sys.argv else False
+print(' Start execute dijkstra algorithms')
 print_result("heapq", datetime.datetime.now(), graph.dijkstra_naive(0))
 print_result("Radix level1", datetime.datetime.now(), graph.dijkstra_radix(0, debug=debug))
 print_result("Radix level2", datetime.datetime.now(), graph.dijkstra_radix(0, level='Two level', debug=debug))
